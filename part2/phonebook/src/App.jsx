@@ -81,6 +81,11 @@ const App = () => {
     }, 4000)
   }
 
+  const extractErrorMessage = (error) => {
+    const message = error?.response?.data?.error
+    return message || 'Operation failed'
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -106,24 +111,34 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-        .catch(() => {
-          showNotification(
-            `Information of ${existingPerson.name} has already been removed from server`,
-            'error'
-          )
-          setPersons(persons.filter((person) => person.id !== existingPerson.id))
+        .catch((error) => {
+          const message = extractErrorMessage(error)
+          if (error?.response?.status === 404) {
+            showNotification(
+              `Information of ${existingPerson.name} has already been removed from server`,
+              'error'
+            )
+            setPersons(persons.filter((person) => person.id !== existingPerson.id))
+          } else {
+            showNotification(message, 'error')
+          }
         })
       return
     }
 
     const personObject = { name: newName, number: newNumber }
 
-    personService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson))
-      showNotification(`Added ${returnedPerson.name}`)
-      setNewName('')
-      setNewNumber('')
-    })
+    personService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson))
+        showNotification(`Added ${returnedPerson.name}`)
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch((error) => {
+        showNotification(extractErrorMessage(error), 'error')
+      })
   }
 
   const handleNameChange = (event) => setNewName(event.target.value)
