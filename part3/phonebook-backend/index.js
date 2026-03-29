@@ -19,7 +19,7 @@ morgan.token('body', (request) => {
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(express.static('dist'))
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, request, response, _next) => {
   if (error.name === 'CastError') {
     return response.status(400).json({ error: 'malformatted id' })
   }
