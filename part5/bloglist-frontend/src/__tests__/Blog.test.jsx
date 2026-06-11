@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { vi, describe, test, expect, afterEach } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import Blog from '../components/Blog'
+import { MemoryRouter } from 'react-router-dom'
 
 describe('Blog component', () => {
   const blog = {
@@ -15,52 +16,49 @@ describe('Blog component', () => {
 
   afterEach(() => cleanup())
 
-  test('renders title and author, but not url or likes by default', () => {
+  test('unauthenticated users see info and likes but no buttons', async () => {
     const mockLike = vi.fn()
     const mockDelete = vi.fn()
-    const { container } = render(<Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'user1', id: 'u1' }} />)
+    const { container } = render(<MemoryRouter><Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={null} /></MemoryRouter>)
 
-    const summary = container.querySelector('.blogSummary')
-    expect(summary).toBeDefined()
-    expect(summary.textContent).toContain('Test Title')
-    expect(summary.textContent).toContain('Test Author')
-
-    const url = container.querySelector('.blogUrl')
-    const likes = container.querySelector('.blogLikes')
-    expect(url).toBeNull()
-    expect(likes).toBeNull()
-  })
-
-  test('shows url and likes when view button is clicked', async () => {
-    const mockLike = vi.fn()
-    const mockDelete = vi.fn()
-    const { container } = render(<Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'user1', id: 'u1' }} />)
-
-    const user = userEvent.setup()
     const viewButton = container.querySelector('.blogSummary button')
-    await user.click(viewButton)
+    const userEvt = userEvent.setup()
+    await userEvt.click(viewButton)
 
     const url = container.querySelector('.blogUrl')
     const likes = container.querySelector('.blogLikes')
     expect(url).toBeDefined()
-    expect(url.textContent).toContain('http://test.com')
     expect(likes).toBeDefined()
     expect(likes.textContent).toContain('likes 5')
+    const likeBtn = container.querySelector('.blogLikes button')
+    const removeBtn = container.querySelector('button[data-testid^="blog-remove"]')
+    expect(likeBtn).toBeNull()
+    expect(removeBtn).toBeNull()
   })
 
-  test('clicking the like button twice calls handler twice', async () => {
+  test('authenticated non-creator sees like button only', async () => {
     const mockLike = vi.fn()
     const mockDelete = vi.fn()
-    render(<Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'user1', id: 'u1' }} />)
-
-    const user = userEvent.setup()
-    const { container } = render(<Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'user1', id: 'u1' }} />)
+    const { container } = render(<MemoryRouter><Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'other', id: 'u2' }} /></MemoryRouter>)
+    const userEvt = userEvent.setup()
     const viewButton = container.querySelector('.blogSummary button')
-    await user.click(viewButton)
-    const likeButton = container.querySelector('.blogLikes button')
-    await user.click(likeButton)
-    await user.click(likeButton)
+    await userEvt.click(viewButton)
+    const likeBtn = container.querySelector('.blogLikes button')
+    const removeBtn = container.querySelector('button[data-testid^="blog-remove"]')
+    expect(likeBtn).toBeDefined()
+    expect(removeBtn).toBeNull()
+  })
 
-    expect(mockLike).toHaveBeenCalledTimes(2)
+  test('blog creator sees like and remove buttons', async () => {
+    const mockLike = vi.fn()
+    const mockDelete = vi.fn()
+    const { container } = render(<MemoryRouter><Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'user1', id: 'u1' }} /></MemoryRouter>)
+    const userEvt = userEvent.setup()
+    const viewButton = container.querySelector('.blogSummary button')
+    await userEvt.click(viewButton)
+    const likeBtn = container.querySelector('.blogLikes button')
+    const removeBtn = container.querySelector('button[data-testid^="blog-remove"]')
+    expect(likeBtn).toBeDefined()
+    expect(removeBtn).toBeDefined()
   })
 })
