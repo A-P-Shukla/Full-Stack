@@ -2,19 +2,33 @@ const mongoose = require('mongoose')
 const app = require('./app')
 const config = require('./utils/config')
 
-if (!config.MONGODB_URI) {
-  console.error('MONGODB_URI is not defined')
-} else {
-  mongoose
-    .connect(config.MONGODB_URI)
-    .then(() => {
-      console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-      console.error('error connecting to MongoDB:', error.message)
-    })
+const start = async () => {
+  let mongoUri = config.MONGODB_URI
+
+  if (!mongoUri) {
+    console.log('MONGODB_URI is not defined — starting in-memory MongoDB')
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server')
+      const mongod = await MongoMemoryServer.create()
+      mongoUri = mongod.getUri()
+      console.log('In-memory MongoDB started')
+    } catch (err) {
+      console.error('Failed to start in-memory MongoDB:', err.message)
+      process.exit(1)
+    }
+  }
+
+  try {
+    await mongoose.connect(mongoUri)
+    console.log('connected to MongoDB')
+  } catch (error) {
+    console.error('error connecting to MongoDB:', error.message)
+    process.exit(1)
+  }
+
+  app.listen(config.PORT, () => {
+    console.log(`Server running on port ${config.PORT}`)
+  })
 }
 
-app.listen(config.PORT, () => {
-  console.log(`Server running on port ${config.PORT}`)
-})
+start()
