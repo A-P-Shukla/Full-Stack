@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 if (!process.env.VITEST) {
   (async () => {
     const { test, expect } = await import('@playwright/test')
 
     test.describe('Blog app', () => {
     test.beforeEach(async ({ page, request }) => {
+=======
+const { test, expect } = require('@playwright/test')
+
+test.describe('Blog app', () => {
+  test.beforeEach(async ({ page, request }) => {
+>>>>>>> b40c06e6561530f2634198d3145fd86bcc383e66
     // reset backend state
     await request.post('http://127.0.0.1:3003/api/testing/reset')
     // create a user
@@ -47,7 +54,11 @@ if (!process.env.VITEST) {
 
     test('a new blog can be created', async ({ page }) => {
       const title = `E2E Blog ${Date.now()}`
+<<<<<<< HEAD
       await page.goto('/create')
+=======
+      await page.click('text=create new blog')
+>>>>>>> b40c06e6561530f2634198d3145fd86bcc383e66
       await page.fill('#title', title)
       await page.fill('#author', 'E2E Author')
       await page.fill('#url', 'http://e2e.test')
@@ -125,6 +136,11 @@ if (!process.env.VITEST) {
         expect(items[i-1].likes).toBeGreaterThanOrEqual(items[i].likes)
       }
     })
+<<<<<<< HEAD
     })
   })()
 }
+=======
+  })
+})
+>>>>>>> b40c06e6561530f2634198d3145fd86bcc383e66
