@@ -15,7 +15,7 @@ const LoginForm = ({ onLogin, setNotification }) => {
       setPassword('')
       setNotification({ message: `Welcome ${user.name}`, type: 'success' })
       setTimeout(() => setNotification(null), 5000)
-    } catch (error) {
+    } catch {
       setNotification({ message: 'invalid username or password', type: 'error' })
       setTimeout(() => setNotification(null), 5000)
     }

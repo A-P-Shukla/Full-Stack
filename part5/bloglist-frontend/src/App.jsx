@@ -77,7 +77,7 @@ const App = () => {
       // Keep user info from existing blog for display
       returned.user = blog.user
       setBlogs(blogs.map(b => b.id !== blog.id ? b : returned))
-    } catch (error) {
+    } catch {
       setNotification({ message: 'error liking blog', type: 'error' })
       setTimeout(() => setNotification(null), 5000)
     }
@@ -90,7 +90,7 @@ const App = () => {
       setBlogs(blogs.filter(b => b.id !== blog.id))
       setNotification({ message: `deleted ${blog.title}`, type: 'success' })
       setTimeout(() => setNotification(null), 5000)
-    } catch (error) {
+    } catch {
       setNotification({ message: 'error deleting blog', type: 'error' })
       setTimeout(() => setNotification(null), 5000)
     }
