@@ -19,17 +19,17 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={handleSubmit}>
         <div>
           title:
-          <input id="title" value={title} onChange={({ target }) => setTitle(target.value)} />
+          <input id="title" data-testid="title-input" value={title} onChange={({ target }) => setTitle(target.value)} />
         </div>
         <div>
           author:
-          <input id="author" value={author} onChange={({ target }) => setAuthor(target.value)} />
+          <input id="author" data-testid="author-input" value={author} onChange={({ target }) => setAuthor(target.value)} />
         </div>
         <div>
           url:
-          <input id="url" value={url} onChange={({ target }) => setUrl(target.value)} />
+          <input id="url" data-testid="url-input" value={url} onChange={({ target }) => setUrl(target.value)} />
         </div>
-        <button id="create-button" type="submit">create</button>
+        <button id="create-button" data-testid="create-button" type="submit">create</button>
       </form>
     </div>
   )
