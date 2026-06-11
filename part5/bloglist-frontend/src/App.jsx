@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const Notification = ({ notification }) => {
   if (!notification) return null
@@ -55,10 +56,42 @@ const App = () => {
     try {
       const created = await blogService.create(blogObject)
       setBlogs(blogs.concat(created))
+      // hide form after creation
+      blogFormRef.current.toggleVisibility()
       setNotification({ message: `a new blog ${created.title} by ${created.author} added`, type: 'success' })
       setTimeout(() => setNotification(null), 5000)
     } catch (error) {
       setNotification({ message: error.response?.data?.error || 'error creating blog', type: 'error' })
+      setTimeout(() => setNotification(null), 5000)
+    }
+  }
+
+  const blogFormRef = useRef()
+
+  const handleLike = async (blog) => {
+    try {
+      const updated = { ...blog, likes: blog.likes + 1 }
+      // ensure user field is id string
+      updated.user = blog.user?.id || blog.user?._id || blog.user
+      const returned = await blogService.update(blog.id, updated)
+      // Keep user info from existing blog for display
+      returned.user = blog.user
+      setBlogs(blogs.map(b => b.id !== blog.id ? b : returned))
+    } catch (error) {
+      setNotification({ message: 'error liking blog', type: 'error' })
+      setTimeout(() => setNotification(null), 5000)
+    }
+  }
+
+  const handleDelete = async (blog) => {
+    if (!window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) return
+    try {
+      await blogService.remove(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+      setNotification({ message: `deleted ${blog.title}`, type: 'success' })
+      setTimeout(() => setNotification(null), 5000)
+    } catch (error) {
+      setNotification({ message: 'error deleting blog', type: 'error' })
       setTimeout(() => setNotification(null), 5000)
     }
   }
@@ -77,10 +110,15 @@ const App = () => {
       <Notification notification={notification} />
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <BlogForm createBlog={createBlog} />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+        <BlogForm createBlog={createBlog} />
+      </Togglable>
+      {blogs
+        .slice()
+        .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+        .map(blog => (
+          <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} user={user} />
+        ))}
     </div>
   )
 }
