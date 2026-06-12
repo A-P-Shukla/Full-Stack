@@ -21,7 +21,7 @@ describe('Blog component', () => {
     const mockDelete = vi.fn()
     const { container } = render(<MemoryRouter><Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={null} /></MemoryRouter>)
 
-    const viewButton = container.querySelector('.blogSummary button')
+    const viewButton = container.querySelector('.blog button')
     const userEvt = userEvent.setup()
     await userEvt.click(viewButton)
 
@@ -41,7 +41,7 @@ describe('Blog component', () => {
     const mockDelete = vi.fn()
     const { container } = render(<MemoryRouter><Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'other', id: 'u2' }} /></MemoryRouter>)
     const userEvt = userEvent.setup()
-    const viewButton = container.querySelector('.blogSummary button')
+    const viewButton = container.querySelector('.blog button')
     await userEvt.click(viewButton)
     const likeBtn = container.querySelector('.blogLikes button')
     const removeBtn = container.querySelector('button[data-testid^="blog-remove"]')
@@ -54,7 +54,7 @@ describe('Blog component', () => {
     const mockDelete = vi.fn()
     const { container } = render(<MemoryRouter><Blog blog={blog} handleLike={mockLike} handleDelete={mockDelete} user={{ username: 'user1', id: 'u1' }} /></MemoryRouter>)
     const userEvt = userEvent.setup()
-    const viewButton = container.querySelector('.blogSummary button')
+    const viewButton = container.querySelector('.blog button')
     await userEvt.click(viewButton)
     const likeBtn = container.querySelector('.blogLikes button')
     const removeBtn = container.querySelector('button[data-testid^="blog-remove"]')
