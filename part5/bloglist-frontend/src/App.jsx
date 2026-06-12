@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { AppBar, Toolbar, Container, Typography, Button, Alert } from '@mui/material'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import LoginForm from './components/LoginForm'
@@ -9,16 +10,10 @@ import BlogView from './components/BlogView'
 
 const Notification = ({ notification }) => {
   if (!notification) return null
-  const style = {
-    border: '1px solid black',
-    padding: 10,
-    marginBottom: 10,
-    color: notification.type === 'error' ? 'red' : 'green'
-  }
   return (
-    <div style={style} className="notification">
-      {notification.message}
-    </div>
+    <Container sx={{ marginTop: 2 }}>
+      <Alert severity={notification.type === 'error' ? 'error' : 'success'}>{notification.message}</Alert>
+    </Container>
   )
 }
 
@@ -104,9 +99,19 @@ const AppContent = () => {
   return (
     <div>
       <Notification notification={notification} />
-      <nav>
-        <Link to="/">blogs</Link> | <Link to="/create">create new</Link> | {user ? <span>{user.name} logged in <button onClick={handleLogout}>logout</button></span> : <Link to="/login">login</Link>}
-      </nav>
+      <AppBar position="static">
+        <Toolbar>
+          <Container sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Bloglist
+            </Typography>
+            <Button color="inherit" component={Link} to="/">blogs</Button>
+            <Button color="inherit" component={Link} to="/create">create new</Button>
+            {user ? <Button color="inherit" onClick={handleLogout}>{user.name} (logout)</Button> : <Button color="inherit" component={Link} to="/login">login</Button>}
+          </Container>
+        </Toolbar>
+      </AppBar>
+      <Container sx={{ marginTop: 3 }}>
       <Routes>
         <Route path="/" element={(
           <div>
@@ -124,6 +129,7 @@ const AppContent = () => {
         <Route path="/create" element={<BlogForm createBlog={createBlog} />} />
         <Route path="/blogs/:id" element={<BlogView blogs={blogs} handleLike={handleLike} handleDelete={handleDelete} user={user} />} />
       </Routes>
+      </Container>
     </div>
   )
 }

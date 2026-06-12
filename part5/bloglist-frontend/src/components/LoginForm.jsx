@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { Box, Button, TextField, Paper, Typography, Container } from '@mui/material'
 
 const LoginForm = ({ onLogin, setNotification }) => {
   const [username, setUsername] = useState('')
@@ -22,31 +23,16 @@ const LoginForm = ({ onLogin, setNotification }) => {
   }
 
   return (
-    <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-            id="username"
-            data-testid="username-input"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            id="password"
-            data-testid="password-input"
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button id="login-button" data-testid="login-button" type="submit">login</button>
-      </form>
-    </div>
+    <Container maxWidth="xs">
+      <Paper elevation={3} sx={{ padding: 3, marginTop: 6 }}>
+        <Typography variant="h6" component="h2" gutterBottom>Log in to application</Typography>
+        <Box component="form" onSubmit={handleLogin} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField id="username" data-testid="username-input" label="username" value={username} onChange={({ target }) => setUsername(target.value)} />
+          <TextField id="password" data-testid="password-input" label="password" type="password" value={password} onChange={({ target }) => setPassword(target.value)} />
+          <Button id="login-button" data-testid="login-button" type="submit" variant="contained">login</Button>
+        </Box>
+      </Paper>
+    </Container>
   )
 }
 
