@@ -1,18 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Card, CardContent, Typography, Button, Box } from '@mui/material'
 
 const Blog = ({ blog, handleLike, handleDelete, user }) => {
   const [visible, setVisible] = useState(false)
 
   const toggleVisible = () => setVisible(!visible)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
 
   const blogUserId = blog.user && (blog.user.id || blog.user._id || blog.user)
   const blogUserName = blog.user && (blog.user.username || blog.user.name)
@@ -20,33 +13,28 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
 
   const idKey = blog.title || blog.id || blog._id
 
-  const idKey = blog.title || blog.id || blog._id
-
   return (
-    <div style={blogStyle} className="blog" data-testid={`blog-${idKey}`}>
-      <div className="blogSummary" data-testid={`blog-summary-${idKey}`}>
-<<<<<<< HEAD
-        <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-=======
-        {blog.title} {blog.author}
->>>>>>> b40c06e6561530f2634198d3145fd86bcc383e66
-        <button onClick={toggleVisible}>{visible ? 'hide' : 'view'}</button>
-      </div>
-      {visible && (
-        <div className="blogDetails" data-testid={`blog-details-${idKey}`}>
-          <div className="blogUrl" data-testid={`blog-url-${idKey}`}>{blog.url}</div>
-          <div className="blogLikes" data-testid={`blog-likes-${idKey}`}>
-<<<<<<< HEAD
-            likes {blog.likes} {user && <button onClick={() => handleLike(blog)}>like</button>}
-=======
-            likes {blog.likes} <button onClick={() => handleLike(blog)}>like</button>
->>>>>>> b40c06e6561530f2634198d3145fd86bcc383e66
-          </div>
-          <div className="blogUser" data-testid={`blog-user-${idKey}`}>{blog.user && (blog.user.name || blog.user.username)}</div>
-          {showDelete && <button data-testid={`blog-remove-${idKey}`} onClick={() => handleDelete(blog)}>remove</button>}
-        </div>
-      )}
-    </div>
+    <Card sx={{ marginBottom: 2 }} className="blog" data-testid={`blog-${idKey}`}>
+      <CardContent>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6" component="div" className="blogSummary" data-testid={`blog-summary-${idKey}`}>
+            <Link to={`/blogs/${blog.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>{blog.title} {blog.author}</Link>
+          </Typography>
+          <Button size="small" onClick={toggleVisible}>{visible ? 'hide' : 'view'}</Button>
+        </Box>
+        {visible && (
+          <Box className="blogDetails" data-testid={`blog-details-${idKey}`} sx={{ marginTop: 2 }}>
+            <Typography className="blogUrl" data-testid={`blog-url-${idKey}`}>{blog.url}</Typography>
+            <Box className="blogLikes" data-testid={`blog-likes-${idKey}`} sx={{ display: 'flex', alignItems: 'center', gap: 1, marginTop: 1 }}>
+              <span className="blogLikesText">likes {blog.likes}</span>
+                {user && <Button size="small" onClick={() => handleLike(blog)}>like</Button>}
+            </Box>
+            <Typography className="blogUser" data-testid={`blog-user-${idKey}`} sx={{ marginTop: 1 }}>{blog.user && (blog.user.name || blog.user.username)}</Typography>
+            {showDelete && <Button color="error" data-testid={`blog-remove-${idKey}`} onClick={() => handleDelete(blog)} sx={{ marginTop: 1 }}>remove</Button>}
+          </Box>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
