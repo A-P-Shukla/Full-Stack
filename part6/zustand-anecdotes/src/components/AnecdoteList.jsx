@@ -4,8 +4,11 @@ import useAnecdoteStore from '../store'
 const AnecdoteList = () => {
   const anecdotes = useAnecdoteStore((s) => s.anecdotes)
   const vote = useAnecdoteStore((s) => s.vote)
+  const filter = useAnecdoteStore((s) => s.filter)
 
-  const sorted = anecdotes.toSorted((a, b) => (b.votes || 0) - (a.votes || 0))
+  const normalized = filter.trim().toLowerCase()
+  const filtered = normalized ? anecdotes.filter(a => a.content.toLowerCase().includes(normalized)) : anecdotes
+  const sorted = filtered.toSorted((a, b) => (b.votes || 0) - (a.votes || 0))
 
   return (
     <div>

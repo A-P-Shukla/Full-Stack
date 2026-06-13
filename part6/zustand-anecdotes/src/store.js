@@ -18,12 +18,14 @@ const createAnecdoteObject = (content) => ({
 
 const useAnecdoteStore = create((set) => ({
   anecdotes: initialAnecdotes.map(createAnecdoteObject),
+  filter: '',
   vote: (id) => set((state) => ({
     anecdotes: state.anecdotes.map(a => a.id === id ? { ...a, votes: a.votes + 1 } : a)
   })),
   create: (content) => set((state) => ({
     anecdotes: state.anecdotes.concat(createAnecdoteObject(content))
-  }))
+  })),
+  setFilter: (value) => set({ filter: value })
 }))
 
 export default useAnecdoteStore
