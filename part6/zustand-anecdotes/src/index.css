@@ -1,0 +1,7 @@
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+body{margin:0;padding:16px;background:#f9fafb}
+.container{max-width:720px;margin:0 auto;background:#fff;padding:24px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+.anecdote{padding:8px 0;border-bottom:1px solid #eee}
+.anecdote div{margin-bottom:6px}
+button{padding:6px 10px;border-radius:4px;border:1px solid #ccc;background:#fff;cursor:pointer}
+input[name="anecdote"]{width:60%;padding:6px;margin-right:8px}
