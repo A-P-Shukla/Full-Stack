@@ -1,9 +1,12 @@
 import React from 'react'
 import useAnecdoteStore from '../store'
+import useNotificationStore from '../notificationStore'
 
 const AnecdoteList = () => {
   const anecdotes = useAnecdoteStore((s) => s.anecdotes)
   const vote = useAnecdoteStore((s) => s.vote)
+  const removeIfZero = useAnecdoteStore((s) => s.removeIfZero)
+  const notify = useNotificationStore((s) => s.setNotification)
   const filter = useAnecdoteStore((s) => s.filter)
 
   const normalized = filter.trim().toLowerCase()
@@ -16,7 +19,16 @@ const AnecdoteList = () => {
         <div key={anecdote.id} className="anecdote">
           <div>{anecdote.content}</div>
           <div>
-            has {anecdote.votes} <button onClick={() => vote(anecdote.id)}>vote</button>
+            has {anecdote.votes} <button onClick={async () => {
+              const updated = await vote(anecdote.id)
+              notify(`you voted '${anecdote.content}'`)
+            }}>vote</button>
+            { (anecdote.votes || 0) === 0 && (
+              <button style={{ marginLeft: 8 }} onClick={async () => {
+                const ok = await removeIfZero(anecdote.id)
+                if (ok) notify(`deleted '${anecdote.content}'`)
+              }}>delete</button>
+            ) }
           </div>
         </div>
       ))}
