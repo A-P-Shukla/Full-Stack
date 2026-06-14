@@ -29,6 +29,13 @@ const useAnecdoteStore = create((set) => ({
       set({ anecdotes: json })
     } catch (err) {
       console.error('failed to fetch anecdotes', err)
+      try {
+        const notify = (await import('./notificationStore')).default
+        // use store directly to set a notification
+        notify.getState().setNotification('failed to fetch anecdotes')
+      } catch (_) {
+        // ignore if notification store import fails
+      }
     }
   },
   vote: async (id) => {

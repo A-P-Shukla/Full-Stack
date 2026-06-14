@@ -18,6 +18,15 @@ server.use((req, res, next) => {
   setTimeout(next, 200)
 })
 
+// Validate POSTed anecdotes: content must be at least 5 characters
+server.post('/anecdotes', (req, res, next) => {
+  const content = req.body && req.body.content
+  if (!content || content.toString().trim().length < 5) {
+    return res.status(400).json({ error: 'content too short' })
+  }
+  next()
+})
+
 server.use(router)
 
 server.listen(PORT, () => {
