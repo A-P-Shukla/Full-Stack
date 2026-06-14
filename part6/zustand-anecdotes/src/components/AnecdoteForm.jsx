@@ -6,15 +6,18 @@ const AnecdoteForm = () => {
   const create = useAnecdoteStore((s) => s.create)
   const notify = useNotificationStore((s) => s.setNotification)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const content = e.target.anecdote.value.trim()
-    if (content) {
-      create(content).then((created) => {
-        notify(`you created '${content}'`)
-      })
-      e.target.reset()
+    if (!content) return
+    try {
+      const created = await create(content)
+      if (created) notify(`you created '${content}'`)
+      else notify('failed to create anecdote')
+    } catch (err) {
+      notify(`error creating anecdote: ${err?.message || err}`)
     }
+    e.target.reset()
   }
 
   return (

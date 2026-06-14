@@ -20,13 +20,23 @@ const AnecdoteList = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes} <button onClick={async () => {
-              const updated = await vote(anecdote.id)
-              notify(`you voted '${anecdote.content}'`)
+              try {
+                const updated = await vote(anecdote.id)
+                if (updated) notify(`you voted '${anecdote.content}'`)
+                else notify('voting failed')
+              } catch (err) {
+                notify(`error voting: ${err?.message || err}`)
+              }
             }}>vote</button>
             { (anecdote.votes || 0) === 0 && (
               <button style={{ marginLeft: 8 }} onClick={async () => {
-                const ok = await removeIfZero(anecdote.id)
-                if (ok) notify(`deleted '${anecdote.content}'`)
+                try {
+                  const ok = await removeIfZero(anecdote.id)
+                  if (ok) notify(`deleted '${anecdote.content}'`)
+                  else notify('delete failed')
+                } catch (err) {
+                  notify(`error deleting: ${err?.message || err}`)
+                }
               }}>delete</button>
             ) }
           </div>
