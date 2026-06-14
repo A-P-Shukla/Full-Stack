@@ -1,9 +1,11 @@
 import React from 'react'
 import { useAnecdotesQuery, useVoteAnecdote } from '../hooks/useAnecdotes'
+import { useNotify } from '../NotificationContext'
 
 const AnecdoteList = () => {
   const { data: anecdotes } = useAnecdotesQuery()
   const voteMutation = useVoteAnecdote()
+  const { notify } = useNotify()
 
   if (!anecdotes) return null
 
@@ -16,7 +18,10 @@ const AnecdoteList = () => {
           <div>{a.content}</div>
           <div>
             has {a.votes}
-            <button style={{ marginLeft: 8 }} onClick={() => voteMutation.mutate(a)}>vote</button>
+            <button style={{ marginLeft: 8 }} onClick={() => voteMutation.mutate(a, {
+              onSuccess: () => notify(`you voted '${a.content}'`),
+              onError: (err) => notify(`error voting: ${err?.message || err}`)
+            })}>vote</button>
           </div>
         </div>
       ))}
